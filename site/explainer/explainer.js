@@ -4,6 +4,8 @@ const sceneLabel = document.querySelector('[data-scene-label]');
 const progress = [...document.querySelectorAll('.scene-progress i')];
 
 const sceneLabels = [
+  'Conventional RL · no resets',
+  'The reset as an intervention',
   'On-policy visitation',
   'The improvable set 𝒢',
   'Random-reset dilution',
