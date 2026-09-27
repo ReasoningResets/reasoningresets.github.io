@@ -238,21 +238,24 @@
         <p class="section-number">03 / From theory to practice</p>
         <h2>How can we do this in practice?</h2>
         <p>
-          The theory gives us a target: states where a better action exists. Their advantages
-          are not directly observable, so a practical method needs a <em>localizer</em>—some way
-          to propose promising reset states from signals it can actually observe. The
-          approximate-localizer result explains how localization errors affect the guarantee;
-          it does not prescribe a particular localizer.
+          The theory asks us to target <em>improvable states</em>: states where the policy admits
+          a strictly better action. Exact credit-assignment oracle access is an idealization.
+          In practice, a localizer identifies improvable states only imperfectly, producing an
+          approximate credit sampler. False discoveries dilute the signal, while missed
+          improvable states shrink the mass on which the update applies.
         </p>
       </div>
       <div class="theory-bridge reveal">
         <div class="bridge-tag">One example</div>
         <div>
-          <h3>SRPO uses the model’s own error localization.</h3>
+          <h3>SRPO uses explicit self-localization.</h3>
           <p>
-            Given a failed reasoning trace, SRPO asks the model to identify its first erroneous
-            thought and resets to the prefix immediately before it. This is one way to
-            approximate the credit-assignment oracle; other localizers are possible.
+            In the RLVR setting, self-localization of the first erroneous step stands in for the
+            credit-assignment oracle. Given a failed reasoning trajectory, the same policy that
+            generated it is prompted to analyze its own trace. The reset state is the
+            self-determined, verified-correct prefix preceding that error. The localization
+            signal could instead come from a process reward model, step-level environment
+            feedback, or a separate localizer.
           </p>
           <a class="text-link" href="srpo/">See how SRPO instantiates the theory <span aria-hidden="true">→</span></a>
         </div>
