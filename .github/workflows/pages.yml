@@ -2,7 +2,7 @@ name: Deploy Reasoning Resets website
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "site/**"
       - ".github/workflows/pages.yml"
