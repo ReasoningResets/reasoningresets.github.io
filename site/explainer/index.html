@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06191f">
+  <meta name="description" content="An animated intuition for why targeting improvable states makes reset-based credit assignment more efficient.">
+  <title>The Reset Theorem — Animated Intuition</title>
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="explainer.css">
+  <script src="explainer.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the explainer</a>
+
+  <header class="lab-header">
+    <a class="wordmark" href="../" aria-label="Reasoning Resets home">
+      <span class="wordmark-mark" aria-hidden="true">R</span>
+      <span>RESETS</span>
+    </a>
+    <span class="lab-badge">Theory playground · v0.1</span>
+    <a class="back-link" href="../">Back to the paper overview <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main id="main">
+    <section class="lab-hero">
+      <p class="eyebrow">An animated intuition for Theorem 1</p>
+      <h1>Where should a<br><em>reset</em> land?</h1>
+      <p class="hero-deck">
+        The theorem compares two ways to revisit the past: sample reset states at random,
+        or concentrate them where the policy admits a strictly better action. Scroll to
+        see where the two gains come from.
+      </p>
+      <a class="scroll-cue" href="#story"><span aria-hidden="true">↓</span> Build the argument</a>
+    </section>
+
+    <section class="scrolly" id="story">
+      <div class="story-copy" aria-label="The theorem, built one idea at a time">
+        <article class="story-step active" data-step="0">
+          <p class="step-number">01 · Start with visitation</p>
+          <h2>A policy passes through many states.</h2>
+          <p>
+            Conservative Policy Iteration draws states from the policy’s
+            <strong>on-policy visitation distribution</strong>. A random reset can land on
+            any state the current policy reaches.
+          </p>
+          <p class="plain-language">Think of these as all the moments in a reasoning trace where we could ask: “what if the next step were different?”</p>
+        </article>
+
+        <article class="story-step" data-step="1">
+          <p class="step-number">02 · Find where gain lives</p>
+          <h2>Only some states have room to improve.</h2>
+          <p>
+            A state is <strong><var>τ</var>-improvable</strong> when the policy admits an
+            action whose advantage is at least <var>τ</var>. Let <var>p</var><sub>π</sub>
+            be the on-policy probability of reaching this improvable set
+            <var>𝒢</var>.
+          </p>
+          <p class="plain-language">If one in ten visited states is improvable, then <var>p</var><sub>π</sub> = 0.1. The useful signal is real—but rare.</p>
+        </article>
+
+        <article class="story-step" data-step="2">
+          <p class="step-number">03 · See the dilution</p>
+          <h2>Random resets average signal with silence.</h2>
+          <p>
+            Random-reset sampling draws from every visited state. An advantage of at least
+            <var>τ</var> appears only with probability <var>p</var><sub>π</sub>, so the
+            minimum guaranteed advantage is diluted to
+            <strong><var>τp</var><sub>π</sub></strong>.
+          </p>
+          <p class="plain-language">At <var>p</var><sub>π</sub> = 0.1, nine of ten resets may spend expensive rollouts where the guaranteed gain does not live.</p>
+        </article>
+
+        <article class="story-step" data-step="3">
+          <p class="step-number">04 · Condition on what matters</p>
+          <h2>The oracle preserves the full signal.</h2>
+          <p>
+            A <strong>credit-assignment oracle</strong> is a membership test for improvable
+            states. Conditioning resets on <var>𝒢</var> changes the estimation target from
+            <var>τp</var><sub>π</sub> back to <strong><var>τ</var></strong>.
+          </p>
+          <p class="plain-language">The oracle does not create a better action. It stops averaging that action’s signal with states that have no guaranteed signal.</p>
+        </article>
+
+        <article class="story-step" data-step="4">
+          <p class="step-number">05 · Square the estimation gain</p>
+          <h2>Why does sample complexity improve by <var>1/p</var><sub>π</sub><sup>2</sup>?</h2>
+          <p>
+            Statistical error shrinks like <strong><var>1/√n</var></strong>. Random resets
+            must resolve a target as small as <var>τp</var><sub>π</sub>; targeted resets resolve
+            <var>τ</var>. Making the target <var>1/p</var><sub>π</sub> larger therefore needs
+            <strong><var>1/p</var><sub>π</sub><sup>2</sup> fewer samples</strong>.
+          </p>
+          <p class="plain-language">To see a signal ten times smaller at the same confidence, you need one hundred times as many samples.</p>
+        </article>
+
+        <article class="story-step" data-step="5">
+          <p class="step-number">06 · Improve where the signal lives</p>
+          <h2>Targeting also yields more progress per iteration.</h2>
+          <p>
+            Credit-aware CPI applies its conservative update on the improvable set rather
+            than everywhere. In the regime highlighted by the theorem, this increases the
+            guaranteed per-iteration improvement by
+            <strong><var>1/p</var><sub>π</sub></strong>.
+          </p>
+          <p class="plain-language">One factor comes from estimating a concentrated signal; the other comes from applying the update where that signal lives.</p>
+        </article>
+      </div>
+
+      <div class="visual-column" aria-live="polite">
+        <div class="visual-stage" data-scene="0" data-stage>
+          <div class="stage-kicker" data-scene-label>On-policy visitation</div>
+
+          <div class="trajectory-layer">
+            <svg class="trajectory" viewBox="0 0 900 520" role="img" aria-labelledby="trajectory-title trajectory-desc">
+              <title id="trajectory-title">A policy trajectory containing one improvable state</title>
+              <desc id="trajectory-desc">Ten connected states form an on-policy trajectory. The seventh is improvable and admits a better alternative action.</desc>
+              <defs>
+                <marker id="arrow-teal" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                  <path d="M0,0 L9,4.5 L0,9 Z" fill="#70e2cc"></path>
+                </marker>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="8" result="blur"></feGaussianBlur>
+                  <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+                </filter>
+              </defs>
+
+              <path class="trace-path" d="M72 260 C132 210, 175 300, 236 250 S345 205, 400 252 S507 302, 566 244 S674 196, 728 250 S805 302, 842 260"></path>
+
+              <g class="state" style="--i:0" transform="translate(72 260)"><circle r="24"></circle><text>1</text></g>
+              <g class="state" style="--i:1" transform="translate(156 245)"><circle r="24"></circle><text>2</text></g>
+              <g class="state" style="--i:2" transform="translate(236 250)"><circle r="24"></circle><text>3</text></g>
+              <g class="state" style="--i:3" transform="translate(318 230)"><circle r="24"></circle><text>4</text></g>
+              <g class="state" style="--i:4" transform="translate(400 252)"><circle r="24"></circle><text>5</text></g>
+              <g class="state" style="--i:5" transform="translate(484 269)"><circle r="24"></circle><text>6</text></g>
+              <g class="state improvable" style="--i:6" transform="translate(566 244)">
+                <circle class="state-halo" r="42"></circle><circle r="27"></circle><text>𝒢</text>
+              </g>
+              <g class="state" style="--i:7" transform="translate(650 225)"><circle r="24"></circle><text>8</text></g>
+              <g class="state" style="--i:8" transform="translate(728 250)"><circle r="24"></circle><text>9</text></g>
+              <g class="state" style="--i:9" transform="translate(810 271)"><circle r="24"></circle><text>10</text></g>
+
+              <g class="better-action">
+                <path d="M566 214 C575 151, 628 113, 709 108" marker-end="url(#arrow-teal)"></path>
+                <circle cx="719" cy="106" r="29"></circle>
+                <text class="action-label" x="719" y="111">y⁺</text>
+                <text class="advantage-label" x="641" y="72">advantage ≥ τ</text>
+              </g>
+
+              <g class="random-rings">
+                <circle style="--i:0" cx="72" cy="260" r="37"></circle><circle style="--i:1" cx="156" cy="245" r="37"></circle>
+                <circle style="--i:2" cx="236" cy="250" r="37"></circle><circle style="--i:3" cx="318" cy="230" r="37"></circle>
+                <circle style="--i:4" cx="400" cy="252" r="37"></circle><circle style="--i:5" cx="484" cy="269" r="37"></circle>
+                <circle class="useful-ring" style="--i:6" cx="566" cy="244" r="42"></circle><circle style="--i:7" cx="650" cy="225" r="37"></circle>
+                <circle style="--i:8" cx="728" cy="250" r="37"></circle><circle style="--i:9" cx="810" cy="271" r="37"></circle>
+              </g>
+            </svg>
+
+            <div class="coverage-chip"><span>coverage</span><strong>p<sub>π</sub> = 0.1</strong></div>
+            <div class="signal-equations">
+              <div class="equation random-equation"><span>random reset signal</span><strong>τp<sub>π</sub></strong></div>
+              <div class="equation oracle-equation"><span>oracle reset signal</span><strong>τ</strong></div>
+            </div>
+          </div>
+
+          <div class="estimation-layer">
+            <p class="panel-eyebrow">Estimation error shrinks as 1/√n</p>
+            <div class="estimator-row">
+              <div class="estimator-copy"><span>Random resets</span><strong>target = τp<sub>π</sub></strong></div>
+              <div class="noise-track random-noise"><i></i><b></b></div>
+              <div class="sample-stack" aria-hidden="true"></div>
+              <small>100× samples</small>
+            </div>
+            <div class="estimator-row targeted-row">
+              <div class="estimator-copy"><span>Oracle resets</span><strong>target = τ</strong></div>
+              <div class="noise-track oracle-noise"><i></i><b></b></div>
+              <div class="sample-stack compact" aria-hidden="true"></div>
+              <small>1× samples</small>
+            </div>
+            <div class="square-law">
+              <span>10× larger target</span><i aria-hidden="true">→ square it →</i><strong>100× fewer samples</strong>
+            </div>
+            <p class="example-note">Illustrated at p<sub>π</sub> = 0.1; shared factors and logarithmic terms are suppressed.</p>
+          </div>
+
+          <div class="update-layer">
+            <p class="panel-eyebrow">One theorem, two distinct gains</p>
+            <div class="gain-flow">
+              <div class="gain-source"><span>target</span><strong>improvable states 𝒢</strong></div>
+              <div class="flow-arrow" aria-hidden="true">→</div>
+              <div class="gain-card">
+                <span>Q-rollout sample complexity</span>
+                <strong>1 / p<sub>π</sub><sup>2</sup></strong>
+                <p>from resolving a larger signal</p>
+              </div>
+              <div class="flow-arrow" aria-hidden="true">+</div>
+              <div class="gain-card coral-card">
+                <span>Per-iteration improvement</span>
+                <strong>1 / p<sub>π</sub></strong>
+                <p>from updating where signal lives</p>
+              </div>
+            </div>
+            <div class="theorem-line">
+              <span>Credit assignment with resets</span>
+              <strong>Sample where improvement is possible. Update there.</strong>
+            </div>
+          </div>
+
+          <div class="scene-progress" aria-hidden="true">
+            <i class="active"></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="approx-lab" id="approximate">
+      <div class="lab-intro">
+        <p class="eyebrow">Now break the idealization</p>
+        <h2>What if the localizer is imperfect?</h2>
+        <p>
+          Exact oracle access is an idealization. The paper’s approximate credit sampler has
+          two error modes. Move them independently to see why they enter different parts of
+          the bound.
+        </p>
+      </div>
+
+      <div class="controls-and-output">
+        <form class="quality-controls">
+          <label for="beta">
+            <span><b>False-discovery rate</b><output for="beta" data-beta-output>β = 0.10</output></span>
+            <input id="beta" data-beta type="range" min="0" max="0.8" value="0.1" step="0.01">
+            <small>Falsely accepted states dilute the conditional signal.</small>
+          </label>
+          <label for="gamma">
+            <span><b>Recall</b><output for="gamma" data-gamma-output>γ = 0.80</output></span>
+            <input id="gamma" data-gamma type="range" min="0.2" max="1" value="0.8" step="0.01">
+            <small>Missed improvable states shrink the mass where the update applies.</small>
+          </label>
+        </form>
+
+        <div class="quality-output">
+          <div class="quality-row">
+            <div><span>Conditional signal</span><strong data-signal-value>0.90τ</strong></div>
+            <div class="quality-track"><i data-signal-bar style="width:90%"></i></div>
+            <small>(1−β)τ</small>
+          </div>
+          <div class="quality-row">
+            <div><span>Improvable states retained</span><strong data-recall-value>80%</strong></div>
+            <div class="quality-track coral"><i data-recall-bar style="width:80%"></i></div>
+            <small>γ</small>
+          </div>
+          <div class="combined-quality">
+            <span>Improvement relative to the exact-oracle rate</span>
+            <strong data-quality-value>72%</strong>
+            <div class="quality-track combined"><i data-quality-bar style="width:72%"></i><b style="left:10%" title="Random-reset boundary at pπ = 0.1"></b></div>
+            <p data-quality-note>Above the random-reset boundary for p<sub>π</sub> = 0.1.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bound-strip">
+        <span>Approximate-oracle improvement</span>
+        <strong>(1−β) γ τ² p<sub>π</sub> / 16HR<sub>max</sub></strong>
+        <p>The exact-oracle rate is attenuated by precision times recall.</p>
+      </div>
+    </section>
+
+    <section class="lab-close">
+      <p class="eyebrow">What this prototype is testing</p>
+      <h2>Can the proof feel inevitable before the reader sees the bound?</h2>
+      <p>This playground is intentionally separate from the main project page. We can revise the metaphors, pacing, and animation without changing the paper-facing explanation.</p>
+      <div class="close-actions">
+        <a class="button primary" href="#story">Replay the explainer <span aria-hidden="true">↑</span></a>
+        <a class="button" href="../">Return to the theory overview <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lab-footer">
+    <span>Reasoning Resets · Theory Playground</span>
+    <a href="https://arxiv.org/abs/2605.25507">Read the paper ↗</a>
+  </footer>
+</body>
+</html>

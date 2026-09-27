@@ -372,6 +372,23 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .srpo > p { color: rgba(255,255,255,0.54); }
 
 .theory { background: #e9eee9; }
+.explainer-invite {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: center;
+  margin: -28px 0 54px;
+  padding: 22px 25px;
+  border: 1px solid rgba(47,181,163,0.32);
+  color: #fff;
+  background: var(--ink-deep);
+  text-decoration: none;
+}
+.explainer-invite > span { color: rgba(255,255,255,0.5); font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; }
+.explainer-invite b { margin-right: 9px; color: var(--teal-bright); }
+.explainer-invite strong { font-family: var(--serif); font-size: 18px; font-weight: 400; }
+.explainer-invite i { margin-left: 12px; color: var(--teal-bright); font-family: var(--sans); font-style: normal; }
+.explainer-invite:hover { border-color: var(--teal); }
 .theory-glossary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -601,6 +618,7 @@ var { font-family: var(--serif); font-style: italic; }
   .wide-result-image { padding: 12px; }
   .citation-box pre { padding: 70px 24px 26px; font-size: 10px; }
   .theory-glossary { grid-template-columns: 1fr; margin-bottom: 65px; }
+  .explainer-invite { display: grid; margin-top: -20px; }
   .theory-glossary article + article { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   .signal-story, .signal-story.reverse { grid-template-columns: 1fr; gap: 32px; margin-bottom: 80px; }
   .signal-story.reverse .signal-copy { order: initial; }
