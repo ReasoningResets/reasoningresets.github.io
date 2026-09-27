@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081c24">
+  <meta name="description" content="Why resets are a powerful primitive for targeted credit assignment in language-model reasoning.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Credit Assignment with Resets in Language Model Reasoning">
+  <meta property="og:description" content="Re-enter a consequential state, sample counterfactual futures, and bind outcome differences to the decisions made there.">
+  <meta property="og:url" content="https://ankur-samanta.github.io/credit-assignment-with-resets/">
+  <meta property="og:image" content="https://ankur-samanta.github.io/credit-assignment-with-resets/figures/tree_visualization.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Credit Assignment with Resets</title>
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <a class="wordmark" href="#top" aria-label="Credit Assignment with Resets home">
+      <span class="wordmark-mark" aria-hidden="true">R</span>
+      <span>RESETS</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">Open navigation</span>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="#idea">Idea</a>
+      <a href="#theory">Theory</a>
+      <a href="#framework">Framework</a>
+      <a href="#citation">Citation</a>
+      <a class="nav-github" href="https://ankur-samanta.github.io/SRPO/">Explore SRPO <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow reveal">Reinforcement learning · Credit assignment · Reasoning</p>
+        <h1 class="reveal">Credit assignment<br><em>with resets.</em></h1>
+        <p class="hero-deck reveal">
+          A reset re-enters a previously visited state and resamples what happens next,
+          binding differences in outcome to the decisions made from that state.
+        </p>
+        <div class="hero-actions reveal">
+          <a class="button button-primary" href="https://arxiv.org/abs/2605.25507">
+            Read the paper <span aria-hidden="true">↗</span>
+          </a>
+          <a class="button button-secondary" href="https://ankur-samanta.github.io/SRPO/">
+            Explore SRPO <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <p class="authors reveal">
+          Ankur Samanta · Akshayaa Magesh · Ayush Jain · Youliang Yu · Daniel Jiang ·
+          Kavosh Asadi · Kaveh Hassani · Paul Sajda · Jalaj Bhandari · Yonathan Efroni
+        </p>
+      </div>
+
+      <div class="hero-diagram reveal" aria-label="Several counterfactual continuations branch from one reset state">
+        <div class="diagram-label">One state. Several futures. Targeted credit.</div>
+        <div class="trace-main">
+          <span class="trace-node complete">01</span>
+          <span class="trace-line"></span>
+          <span class="trace-node complete">02</span>
+          <span class="trace-line"></span>
+          <span class="trace-node reset">03</span>
+          <span class="trace-line failed"></span>
+          <span class="trace-node failed">×</span>
+        </div>
+        <div class="reset-tag">reset and resample</div>
+        <div class="branches">
+          <div class="branch"><span></span><b>+1</b></div>
+          <div class="branch"><span></span><b>+1</b></div>
+          <div class="branch muted"><span></span><b>0</b></div>
+        </div>
+        <p>Hold the past fixed. Vary the future. Learn which decisions matter.</p>
+      </div>
+
+      <div class="hero-metrics reveal" aria-label="Key theoretical results">
+        <div><strong>1/p<sub>π</sub><sup>2</sup></strong><span>sample-complexity gain</span></div>
+        <div><strong>1/p<sub>π</sub></strong><span>per-iteration improvement gain</span></div>
+        <div><strong>0</strong><span>external step-level labels needed by SRPO</span></div>
+      </div>
+    </section>
+
+    <section class="section problem" id="idea">
+      <div class="section-heading reveal">
+        <p class="section-number">01 / The problem</p>
+        <h2>Outcome rewards know <em>if</em> a trace failed.<br>They do not know <em>where.</em></h2>
+      </div>
+      <div class="comparison-grid">
+        <article class="comparison-card conventional reveal">
+          <div class="card-label"><span>A</span> Uniform credit</div>
+          <h3>One outcome is propagated across every token.</h3>
+          <div class="token-strip" aria-hidden="true">
+            <span>correct</span><span>correct</span><span>error</span><span>answer</span>
+          </div>
+          <div class="reward-strip negative" aria-hidden="true">
+            <span>−</span><span>−</span><span>−</span><span>−</span>
+          </div>
+          <p>The update cannot distinguish load-bearing reasoning from the decision that caused failure.</p>
+        </article>
+        <article class="comparison-card srpo reveal">
+          <div class="card-label"><span>B</span> Credit through resets</div>
+          <h3>Counterfactual futures isolate the consequential choice.</h3>
+          <div class="token-strip" aria-hidden="true">
+            <span class="masked">fixed</span><span class="masked">fixed</span><span>reset</span><span>varied</span>
+          </div>
+          <div class="reward-strip positive" aria-hidden="true">
+            <span>·</span><span>·</span><span>+</span><span>+</span>
+          </div>
+          <p>Shared history is held fixed; outcome differences arise from decisions after the reset.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section theory" id="theory">
+      <div class="section-heading reveal">
+        <p class="section-number">02 / The theory</p>
+        <h2>The useful learning signal lives in
+          <em>improvable states.</em>
+        </h2>
+        <p>
+          We study resets through Conservative Policy Iteration, the policy-improvement
+          framework underlying methods such as PPO and GRPO. If exploration is expensive,
+          the reset state—not merely the number of samples—determines how much useful signal
+          reaches the update.
+        </p>
+      </div>
+
+      <div class="theory-glossary reveal" aria-label="Core theory concepts">
+        <article><span class="theory-symbol">x</span><div><h3>State</h3><p>The prompt plus every reasoning step generated so far.</p></div></article>
+        <article><span class="theory-symbol">y</span><div><h3>Action</h3><p>The model’s next complete reasoning step.</p></div></article>
+        <article><span class="theory-symbol">𝒢</span><div><h3>Improvable set</h3><p>States where some alternative action has advantage at least <var>τ</var>.</p></div></article>
+        <article><span class="theory-symbol">p<sub>π</sub></span><div><h3>Coverage</h3><p>The on-policy probability of reaching an improvable state.</p></div></article>
+      </div>
+
+      <div class="signal-story">
+        <div class="signal-copy reveal">
+          <p class="story-step">Step 1 · Find where improvement is possible</p>
+          <h3>Most visited states may have little useful signal.</h3>
+          <p>
+            A state is <strong><var>τ</var>-improvable</strong> when a different next
+            action would be better by at least <var>τ</var>. If only one in ten visited
+            states has that property, then <var>p</var><sub>π</sub> = 0.1. Those rare
+            states dominate the opportunity for improvement.
+          </p>
+        </div>
+        <div class="state-field reveal" aria-label="One improvable state among ten visited states">
+          <div class="field-label"><span>on-policy states</span><span>p<sub>π</sub> = 0.1</span></div>
+          <div class="state-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span class="improvable"><b>𝒢</b></span><span></span><span></span><span></span>
+          </div>
+          <div class="field-key"><i></i> Improvable: a better action exists here</div>
+        </div>
+      </div>
+
+      <div class="signal-story reverse">
+        <div class="signal-copy reveal">
+          <p class="story-step">Step 2 · Avoid signal dilution</p>
+          <h3>Random sampling sees <var>τp</var><sub>π</sub>. Targeted sampling sees <var>τ</var>.</h3>
+          <p>
+            Random-reset CPI averages over every visited state. Because an improvable state
+            appears only with probability <var>p</var><sub>π</sub>, its guaranteed advantage
+            is diluted. A credit-assignment oracle conditions directly on the improvable set,
+            preserving the full signal.
+          </p>
+        </div>
+        <div class="signal-meter reveal" aria-label="Targeted reset signal is ten times larger than random reset signal when coverage is ten percent">
+          <div class="meter-row random-meter">
+            <div><b>Random reset</b><span>averages over all states</span></div>
+            <div class="meter-track"><i style="--meter: 10%"></i></div>
+            <strong>τp<sub>π</sub></strong>
+          </div>
+          <div class="meter-row oracle-meter">
+            <div><b>Targeted reset</b><span>conditions on 𝒢</span></div>
+            <div class="meter-track"><i style="--meter: 100%"></i></div>
+            <strong>τ</strong>
+          </div>
+          <p>At <var>p</var><sub>π</sub> = 0.1, the estimation target is <b>10× larger.</b></p>
+        </div>
+      </div>
+
+      <div class="theory-payoff reveal">
+        <div class="payoff-intro">
+          <p class="story-step">Step 3 · Convert signal into improvement</p>
+          <h3>Targeting changes both estimation and the update.</h3>
+          <p>
+            A <strong>1/<var>p</var><sub>π</sub> larger</strong> target cuts the rollout
+            requirement by <strong>1/<var>p</var><sub>π</sub><sup>2</sup></strong>.
+            Restricting the update to the improvable set also permits a
+            <strong>1/<var>p</var><sub>π</sub> larger</strong> conservative step.
+          </p>
+        </div>
+        <div class="payoff-cards">
+          <article><span>Sample complexity</span><strong>1 / p<sub>π</sub><sup>2</sup></strong><p>fewer expensive Q-rollouts</p></article>
+          <article><span>Per-iteration improvement</span><strong>1 / p<sub>π</sub></strong><p>larger guaranteed progress</p></article>
+          <article class="example-card"><span>If p<sub>π</sub> = 0.1</span><strong>100× / 10×</strong><p>sample / iteration factors</p></article>
+        </div>
+      </div>
+
+      <div class="guarantee reveal">
+        <div class="guarantee-heading"><span>The formal guarantee</span><p>Suppressing shared factors and logarithmic terms</p></div>
+        <div class="guarantee-table" role="table" aria-label="Random reset and credit-oracle CPI guarantees">
+          <div class="guarantee-row guarantee-labels" role="row"><span role="columnheader">CPI variant</span><span role="columnheader">Samples needed</span><span role="columnheader">Improvement per iteration</span></div>
+          <div class="guarantee-row random-row" role="row"><strong role="cell">Random reset</strong><span role="cell">Õ(1 / τ²p<sub>π</sub>²)</span><span role="cell">Ω(τ²p<sub>π</sub>²)</span></div>
+          <div class="guarantee-row oracle-row" role="row"><strong role="cell">Credit oracle</strong><span role="cell">Õ(1 / τ²)</span><span role="cell">Ω(τ²p<sub>π</sub>)</span></div>
+        </div>
+        <p class="guarantee-note">Theorem 1 assumes a finite, realizable value-function class and bounded rewards.</p>
+      </div>
+
+      <div class="approximate-oracle reveal">
+        <div class="approximate-heading">
+          <p class="story-step">The realistic case</p>
+          <h3>What if targeting is imperfect?</h3>
+          <p>A practical localizer selects an approximate set <var>𝒮</var>, rather than the true improvable set <var>𝒢</var>.</p>
+        </div>
+        <div class="error-modes">
+          <article><span class="error-symbol">β</span><div><h4>False discoveries dilute signal.</h4><p>If a fraction <var>β</var> of selected states are not improvable, the guaranteed signal falls from <var>τ</var> to <strong>(1−β)τ</strong>.</p></div></article>
+          <article><span class="error-symbol">γ</span><div><h4>Misses reduce update coverage.</h4><p>Recall <var>γ</var> controls how many truly improvable states remain. Missing one reduces where the useful update can act.</p></div></article>
+        </div>
+        <div class="approximate-bound">
+          <span>Approximate-localizer guarantee</span>
+          <strong>improvement ≥ (1−β)<sup>2</sup> τ<sup>2</sup> p<sub>ν</sub> / 16HR<sub>max</sub></strong>
+          <p>Perfect targeting is unnecessary: the benefit degrades continuously with precision and recall.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section method" id="framework">
+      <div class="section-heading narrow reveal">
+        <p class="section-number">03 / From principle to algorithm</p>
+        <h2>How should we choose the reset state?</h2>
+        <p>
+          The theory asks for states with room to improve. In practice, a reset policy must
+          identify them without direct access to advantage. The paper studies two realizations.
+        </p>
+      </div>
+      <div class="comparison-grid">
+        <article class="comparison-card conventional reveal">
+          <div class="card-label"><span>R</span> RRPO</div>
+          <h3>Choose a reasoning step uniformly at random.</h3>
+          <p>Random resets provide the control: they revisit prior states without targeting where improvement is possible.</p>
+        </article>
+        <article class="comparison-card srpo reveal">
+          <div class="card-label"><span>S</span> SRPO</div>
+          <h3>Ask the model to localize its first error.</h3>
+          <p>Self-localization provides a training-free approximation to the credit-assignment oracle.</p>
+        </article>
+      </div>
+      <figure class="paper-figure reveal" style="margin-top: 20px">
+        <img src="figures/tree_visualization.png" alt="A failed rollout is reset at an intermediate state and expanded into several counterfactual continuations." loading="lazy">
+        <figcaption><span>One realization</span>SRPO resets to the clean prefix before a self-localized error and learns from several alternative suffixes.</figcaption>
+      </figure>
+      <div class="hero-actions reveal" style="margin-top: 28px">
+        <a class="button button-primary" href="https://ankur-samanta.github.io/SRPO/">See how SRPO works <span aria-hidden="true">→</span></a>
+        <a class="button" href="https://github.com/Ankur-Samanta/SRPO">Browse the code <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section class="section takeaway">
+      <div class="takeaway-inner reveal">
+        <p class="section-number">The takeaway</p>
+        <blockquote>
+          Better credit assignment begins by revisiting the states where a better decision was possible.
+        </blockquote>
+        <a class="text-link" href="https://arxiv.org/abs/2605.25507">Explore the full paper <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section class="section citation" id="citation">
+      <div class="section-heading narrow reveal">
+        <p class="section-number">04 / Citation</p>
+        <h2>Build on this work.</h2>
+        <p>If credit assignment with resets is useful in your research, please cite the paper.</p>
+      </div>
+      <div class="citation-box reveal">
+        <pre><code id="bibtex">@misc{samanta2026credit,
+  title         = {Credit Assignment with Resets in Language Model Reasoning},
+  author        = {Ankur Samanta and Akshayaa Magesh and Ayush Jain and
+                   Youliang Yu and Daniel Jiang and Kavosh Asadi and
+                   Kaveh Hassani and Paul Sajda and Jalaj Bhandari and
+                   Yonathan Efroni},
+  year          = {2026},
+  eprint        = {2605.25507},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}</code></pre>
+        <button class="copy-button" type="button" data-copy aria-label="Copy BibTeX citation"><span data-copy-label>Copy BibTeX</span></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <a class="wordmark footer-mark" href="#top"><span class="wordmark-mark" aria-hidden="true">R</span><span>RESETS</span></a>
+      <p>Credit Assignment with Resets in Language Model Reasoning</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://arxiv.org/abs/2605.25507">Paper ↗</a>
+      <a href="https://ankur-samanta.github.io/SRPO/">SRPO ↗</a>
+      <a href="https://github.com/Ankur-Samanta/SRPO">Code ↗</a>
+    </div>
+  </footer>
+</body>
+</html>
