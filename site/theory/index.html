@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081c24">
+  <meta name="description" content="Theory for credit assignment with resets: improvable states, credit-oracle CPI, and approximate credit samplers.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Theory — Credit Assignment with Resets">
+  <meta property="og:description" content="Credit-oracle CPI targets improvable states and improves sample complexity and per-iteration improvement over random-reset CPI.">
+  <meta property="og:url" content="https://reasoningresets.github.io/theory/">
+  <title>Theory — Credit Assignment with Resets</title>
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../home.css">
+  <script src="../script.js" defer></script>
+</head>
+<body class="home-page theory-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <a class="wordmark" href="../" aria-label="Credit Assignment with Resets home"><span>Credit Assignment with Resets</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span><span></span><span class="sr-only">Open navigation</span>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="../">Overview</a>
+      <a href="../explainer/">Animated explainer</a>
+      <a href="https://arxiv.org/abs/2605.25507">Paper</a>
+      <a class="nav-github" href="../srpo/">SRPO method <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="subpage-hero">
+      <div>
+        <p class="eyebrow reveal">Theory</p>
+        <h1 class="reveal">Credit assignment with targeted resets</h1>
+        <p class="hero-deck reveal">
+          We analyze resets within Conservative Policy Iteration and compare random-reset
+          sampling with a credit-assignment oracle that targets improvable states.
+        </p>
+      </div>
+    </section>
+
+    <section class="section theory" id="theory">
+      <div class="section-heading reveal">
+        <p class="section-number">01 / Setup</p>
+        <h2>The oracle identifies states that admit a better action.</h2>
+        <p>
+          A state is <var>τ</var>-improvable when the policy admits an action with advantage
+          at least <var>τ</var>. The quantity <var>p</var><sub>π</sub> is the on-policy
+          probability of reaching the improvable set <var>𝒢</var>.
+        </p>
+        <div class="section-actions">
+          <a class="button button-dark" href="../explainer/">Animated walkthrough <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="theory-cards">
+        <article class="theory-card reveal">
+          <p class="card-label"><span>01</span> Improvable states</p>
+          <h3><var>𝒢</var> contains states with maximum action advantage at least <var>τ</var>.</h3>
+          <p>
+            When <var>p</var><sub>π</sub> is small, random-reset CPI spends most of its
+            sampling budget on states without a guaranteed advantage of <var>τ</var>.
+          </p>
+          <div class="state-row" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i class="selected">𝒢</i><i></i><i></i><i></i>
+          </div>
+          <small>Example: p<sub>π</sub> = 0.1</small>
+        </article>
+
+        <article class="theory-card reveal">
+          <p class="card-label"><span>02</span> Advantage estimation</p>
+          <h3>Conditioning on <var>𝒢</var> removes the <var>p</var><sub>π</sub> dilution factor.</h3>
+          <p>
+            Random-reset CPI has a global guaranteed advantage of
+            <var>τp</var><sub>π</sub>. The credit sampler conditions on the improvable set
+            and has conditional guaranteed advantage <var>τ</var>.
+          </p>
+          <div class="signal-comparison">
+            <div><span>Random reset</span><i><b style="width:10%"></b></i><strong>τp<sub>π</sub></strong></div>
+            <div><span>Credit oracle</span><i><b style="width:100%"></b></i><strong>τ</strong></div>
+          </div>
+        </article>
+
+        <article class="theory-card theorem-card reveal">
+          <p class="card-label"><span>03</span> Policy update</p>
+          <h3>Credit-oracle CPI applies its conservative update on the improvable set.</h3>
+          <p>
+            The larger conditional advantage reduces the number of Q-rollouts required for
+            estimation. Restricting the update to <var>𝒢</var> also permits a larger
+            conservative step.
+          </p>
+          <div class="factor-pair">
+            <div><span>Sample complexity</span><strong>1 / p<sub>π</sub><sup>2</sup></strong></div>
+            <div><span>Per-iteration improvement</span><strong>1 / p<sub>π</sub></strong></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="guarantee reveal">
+        <div class="guarantee-heading"><span>Theorem 1</span><p>Shared factors and logarithmic terms suppressed</p></div>
+        <div class="guarantee-table" role="table" aria-label="Random reset and credit-oracle CPI guarantees">
+          <div class="guarantee-row guarantee-labels" role="row"><span role="columnheader">CPI variant</span><span role="columnheader">Samples</span><span role="columnheader">Improvement per iteration</span></div>
+          <div class="guarantee-row random-row" role="row"><strong role="cell">Random reset</strong><span role="cell">Õ(1 / τ²p<sub>π</sub>²)</span><span role="cell">Ω(τ²p<sub>π</sub>²)</span></div>
+          <div class="guarantee-row oracle-row" role="row"><strong role="cell">Credit oracle</strong><span role="cell">Õ(1 / τ²)</span><span role="cell">Ω(τ²p<sub>π</sub>)</span></div>
+        </div>
+        <p class="guarantee-note">The theorem assumes a finite, realizable value-function class and bounded rewards.</p>
+      </div>
+    </section>
+
+    <section class="section approximate-section" id="approximate">
+      <div class="section-heading reveal">
+        <p class="section-number">02 / Approximate credit sampler</p>
+        <h2>A practical localizer may select states outside the improvable set.</h2>
+        <p>
+          Exact oracle access is an idealization. An approximate credit sampler conditions
+          on a selected set <var>𝒮</var>, which need not equal the true improvable set
+          <var>𝒢</var>.
+        </p>
+      </div>
+
+      <div class="approximate-summary reveal">
+        <div>
+          <h3>The two localization errors enter different parts of the bound.</h3>
+          <p>
+            False discoveries reduce the conditional advantage. Missed improvable states
+            reduce the on-policy mass on which the update is applied.
+          </p>
+        </div>
+        <div class="approximate-factors">
+          <div><span>False-discovery rate β</span><strong>(1−β)τ</strong><p>conditional guaranteed advantage</p></div>
+          <div><span>Recall γ</span><strong>(1−β)γ</strong><p>factor relative to the exact-oracle improvement rate</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section practice-link">
+      <div class="section-heading narrow reveal">
+        <p class="section-number">03 / Practical instantiation</p>
+        <h2>SRPO uses explicit self-localization in place of the oracle.</h2>
+        <p>
+          In the RLVR setting, the model identifies the first erroneous thought in a failed
+          trajectory and resets to the verified-correct prefix preceding that error.
+        </p>
+        <div class="section-actions"><a class="button button-dark" href="../srpo/">SRPO method and results <span aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><a class="wordmark footer-mark" href="../"><span>Credit Assignment with Resets</span></a><p>Theory</p></div>
+    <div class="footer-links"><a href="../">Overview</a><a href="../explainer/">Animated explainer</a><a href="https://arxiv.org/abs/2605.25507">Paper ↗</a></div>
+  </footer>
+</body>
+</html>

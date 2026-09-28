@@ -14,24 +14,22 @@
   <title>Credit Assignment with Resets</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="home.css">
   <script src="script.js" defer></script>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header" data-header>
-    <a class="wordmark" href="#top" aria-label="Credit Assignment with Resets home">
-      <span class="wordmark-mark" aria-hidden="true">R</span>
-      <span>RESETS</span>
-    </a>
+    <a class="wordmark" href="#top" aria-label="Credit Assignment with Resets home"><span>Credit Assignment with Resets</span></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
       <span></span><span></span><span></span>
       <span class="sr-only">Open navigation</span>
     </button>
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
       <a href="#idea">Motivation</a>
-      <a href="#theory">Theory</a>
-      <a href="explainer/">Animated explainer</a>
+      <a href="theory/">Theory</a>
+      <a href="explainer/">Experimental explainer</a>
       <a href="#practice">Practice</a>
       <a href="#citation">Citation</a>
       <a class="nav-github" href="srpo/">SRPO method <span aria-hidden="true">↗</span></a>
@@ -40,10 +38,10 @@
 
   <main id="main">
     <section class="hero" id="top">
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-content">
+      <div class="hero-inner">
+        <div class="hero-content">
         <p class="eyebrow reveal">Project page · arXiv:2605.25507</p>
-        <h1 class="reveal">Credit assignment<br><em>with resets.</em></h1>
+        <h1 class="reveal">Credit Assignment<br><em>with Resets</em></h1>
         <p class="hero-deck reveal">
           A reset re-enters a previously visited state and resamples what happens next,
           binding differences in outcome to the decisions made from that state.
@@ -60,32 +58,7 @@
           Ankur Samanta · Akshayaa Magesh · Ayush Jain · Youliang Yu · Daniel Jiang ·
           Kavosh Asadi · Kaveh Hassani · Paul Sajda · Jalaj Bhandari · Yonathan Efroni
         </p>
-      </div>
-
-      <div class="hero-diagram reveal" aria-label="Several counterfactual continuations branch from one reset state">
-        <div class="diagram-label">Shared-prefix counterfactual sampling</div>
-        <div class="trace-main">
-          <span class="trace-node complete">01</span>
-          <span class="trace-line"></span>
-          <span class="trace-node complete">02</span>
-          <span class="trace-line"></span>
-          <span class="trace-node reset">03</span>
-          <span class="trace-line failed"></span>
-          <span class="trace-node failed">×</span>
         </div>
-        <div class="reset-tag">reset and resample</div>
-        <div class="branches">
-          <div class="branch"><span></span><b>+1</b></div>
-          <div class="branch"><span></span><b>+1</b></div>
-          <div class="branch muted"><span></span><b>0</b></div>
-        </div>
-        <p>The continuations share a prefix and differ only after the reset state. Their outcome differences provide credit to the divergent suffixes.</p>
-      </div>
-
-      <div class="hero-metrics reveal" aria-label="Key theoretical results">
-        <div><strong>1/p<sub>π</sub><sup>2</sup></strong><span>sample-complexity reduction relative to random resets</span></div>
-        <div><strong>1/p<sub>π</sub></strong><span>increase in guaranteed per-iteration improvement</span></div>
-        <div><strong>τ</strong><span>minimum advantage at an improvable state</span></div>
       </div>
     </section>
 
@@ -123,116 +96,33 @@
     <section class="section theory" id="theory">
       <div class="section-heading reveal">
         <p class="section-number">02 / The theory</p>
-        <h2>The credit-assignment oracle targets <em>improvable states.</em></h2>
+        <h2>Targeted resets concentrate policy-advantage signal.</h2>
         <p>
-          We analyze resets within Conservative Policy Iteration (CPI). The credit-assignment
-          oracle is a membership test for states that admit an action with advantage greater
-          than a threshold <var>τ</var>. Credit-oracle CPI draws reset states from this set and
-          applies the policy update only there.
+          We extend Conservative Policy Iteration with a credit-assignment oracle that targets
+          <var>τ</var>-improvable states. Relative to random-reset CPI, the oracle reduces
+          sample complexity and increases guaranteed per-iteration improvement.
         </p>
       </div>
 
-      <a class="explainer-invite reveal" href="explainer/">
-        <span><b>Supplement</b> Scroll-based theory explainer</span>
-        <strong>Walkthrough of the argument in Theorem 1 <i aria-hidden="true">→</i></strong>
-      </a>
-
-      <div class="theory-glossary reveal" aria-label="Core theory concepts">
-        <article><span class="theory-symbol">x</span><div><h3>State</h3><p>The prompt plus every reasoning step generated so far.</p></div></article>
-        <article><span class="theory-symbol">y</span><div><h3>Action</h3><p>The model’s next complete reasoning step.</p></div></article>
-        <article><span class="theory-symbol">𝒢</span><div><h3>Improvable set</h3><p>States where some alternative action has advantage at least <var>τ</var>.</p></div></article>
-        <article><span class="theory-symbol">p<sub>π</sub></span><div><h3>Coverage</h3><p>The on-policy probability of reaching an improvable state.</p></div></article>
-      </div>
-
-      <div class="signal-story">
-        <div class="signal-copy reveal">
-          <p class="story-step">Definition · Improvable states</p>
-          <h3>The <var>τ</var>-improvable set contains states that admit an action with advantage at least <var>τ</var>.</h3>
+      <div class="theory-overview reveal">
+        <div>
+          <p class="card-label"><span>𝒢</span> Credit-assignment oracle</p>
+          <h3>The oracle conditions reset sampling on states that admit an action with advantage at least <var>τ</var>.</h3>
           <p>
             The quantity <var>p</var><sub>π</sub> is the on-policy probability of reaching
-            this set. When <var>p</var><sub>π</sub> is small, random-reset CPI spends most
-            of its sampling budget on states without a guaranteed advantage of <var>τ</var>.
+            the improvable set. Conditioning on this set changes the guaranteed advantage
+            from <var>τp</var><sub>π</sub> to <var>τ</var>.
           </p>
         </div>
-        <div class="state-field reveal" aria-label="One improvable state among ten visited states">
-          <div class="field-label"><span>on-policy states</span><span>p<sub>π</sub> = 0.1</span></div>
-          <div class="state-dots" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
-            <span></span><span class="improvable"><b>𝒢</b></span><span></span><span></span><span></span>
-          </div>
-          <div class="field-key"><i></i> State in the <var>τ</var>-improvable set</div>
+        <div class="factor-pair">
+            <div><span>Sample complexity</span><strong>1 / p<sub>π</sub><sup>2</sup></strong></div>
+            <div><span>Per-iteration improvement</span><strong>1 / p<sub>π</sub></strong></div>
         </div>
       </div>
 
-      <div class="signal-story reverse">
-        <div class="signal-copy reveal">
-          <p class="story-step">Advantage estimation</p>
-          <h3>Random-reset CPI has a guaranteed advantage of <var>τp</var><sub>π</sub>; credit-oracle CPI has conditional guaranteed advantage <var>τ</var>.</h3>
-          <p>
-            Random-reset CPI averages over every visited state. Because an improvable state
-            appears only with probability <var>p</var><sub>π</sub>, the global guaranteed
-            advantage is <var>τp</var><sub>π</sub>. Conditioning on the improvable set gives
-            a conditional guaranteed advantage of <var>τ</var>.
-          </p>
-        </div>
-        <div class="signal-meter reveal" aria-label="Targeted reset signal is ten times larger than random reset signal when coverage is ten percent">
-          <div class="meter-row random-meter">
-            <div><b>Random reset</b><span>averages over all states</span></div>
-            <div class="meter-track"><i style="--meter: 10%"></i></div>
-            <strong>τp<sub>π</sub></strong>
-          </div>
-          <div class="meter-row oracle-meter">
-            <div><b>Targeted reset</b><span>conditions on 𝒢</span></div>
-            <div class="meter-track"><i style="--meter: 100%"></i></div>
-            <strong>τ</strong>
-          </div>
-          <p>At <var>p</var><sub>π</sub> = 0.1, the estimation target is <b>10× larger.</b></p>
-        </div>
-      </div>
-
-      <div class="theory-payoff reveal">
-        <div class="payoff-intro">
-          <p class="story-step">Theorem 1</p>
-          <h3>Credit-oracle CPI reduces sample complexity and increases guaranteed per-iteration improvement.</h3>
-          <p>
-            A <strong>1/<var>p</var><sub>π</sub> larger</strong> target cuts the rollout
-            requirement by <strong>1/<var>p</var><sub>π</sub><sup>2</sup></strong>.
-            Restricting the update to the improvable set also permits a
-            <strong>1/<var>p</var><sub>π</sub> larger</strong> conservative step.
-          </p>
-        </div>
-        <div class="payoff-cards">
-          <article><span>Sample complexity</span><strong>1 / p<sub>π</sub><sup>2</sup></strong><p>reduction in required Q-rollouts</p></article>
-          <article><span>Per-iteration improvement</span><strong>1 / p<sub>π</sub></strong><p>increase in the guaranteed bound</p></article>
-          <article class="example-card"><span>If p<sub>π</sub> = 0.1</span><strong>100× / 10×</strong><p>relative sample / improvement factors</p></article>
-        </div>
-      </div>
-
-      <div class="guarantee reveal">
-        <div class="guarantee-heading"><span>The formal guarantee</span><p>Suppressing shared factors and logarithmic terms</p></div>
-        <div class="guarantee-table" role="table" aria-label="Random reset and credit-oracle CPI guarantees">
-          <div class="guarantee-row guarantee-labels" role="row"><span role="columnheader">CPI variant</span><span role="columnheader">Samples needed</span><span role="columnheader">Improvement per iteration</span></div>
-          <div class="guarantee-row random-row" role="row"><strong role="cell">Random reset</strong><span role="cell">Õ(1 / τ²p<sub>π</sub>²)</span><span role="cell">Ω(τ²p<sub>π</sub>²)</span></div>
-          <div class="guarantee-row oracle-row" role="row"><strong role="cell">Credit oracle</strong><span role="cell">Õ(1 / τ²)</span><span role="cell">Ω(τ²p<sub>π</sub>)</span></div>
-        </div>
-        <p class="guarantee-note">Theorem 1 assumes a finite, realizable value-function class and bounded rewards.</p>
-      </div>
-
-      <div class="approximate-oracle reveal">
-        <div class="approximate-heading">
-          <p class="story-step">Approximate credit sampler</p>
-          <h3>A practical localizer may return states outside the improvable set.</h3>
-          <p>The approximate sampler conditions on a selected set <var>𝒮</var>, rather than the true improvable set <var>𝒢</var>.</p>
-        </div>
-        <div class="error-modes">
-          <article><span class="error-symbol">β</span><div><h4>False-discovery rate</h4><p>If a fraction <var>β</var> of selected states are not improvable, the conditional guaranteed advantage is <strong>(1−β)τ</strong>.</p></div></article>
-          <article><span class="error-symbol">γ</span><div><h4>Recall</h4><p>The recall <var>γ</var> determines the on-policy mass of improvable states on which the update is applied.</p></div></article>
-        </div>
-        <div class="approximate-bound">
-          <span>Approximate-localizer guarantee</span>
-          <strong>improvement ≥ (1−β)<sup>2</sup> τ<sup>2</sup> p<sub>ν</sub> / 16HR<sub>max</sub></strong>
-          <p>The exact-oracle improvement rate is attenuated by precision times recall.</p>
-        </div>
+      <div class="section-actions reveal">
+        <a class="button button-dark" href="theory/">Theory and guarantees <span aria-hidden="true">→</span></a>
+        <a class="button button-outline" href="explainer/">Experimental explainer <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
@@ -289,13 +179,14 @@
 
   <footer class="site-footer">
     <div>
-      <a class="wordmark footer-mark" href="#top"><span class="wordmark-mark" aria-hidden="true">R</span><span>RESETS</span></a>
+      <a class="wordmark footer-mark" href="#top"><span>Credit Assignment with Resets</span></a>
       <p>Credit Assignment with Resets in Language Model Reasoning</p>
     </div>
     <div class="footer-links">
+      <a href="theory/">Theory</a>
+      <a href="explainer/">Experimental explainer</a>
       <a href="https://arxiv.org/abs/2605.25507">Paper ↗</a>
       <a href="srpo/">SRPO ↗</a>
-      <a href="https://github.com/Ankur-Samanta/SRPO">Code ↗</a>
     </div>
   </footer>
 </body>
